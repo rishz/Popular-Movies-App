@@ -5,15 +5,22 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.rishabhshukla.popularmoviesapp.R;
 import com.rishabhshukla.popularmoviesapp.controller.MovieAdapter;
+import com.rishabhshukla.popularmoviesapp.model.MovieList;
 import com.rishabhshukla.popularmoviesapp.model.SingleMovie;
+import com.rishabhshukla.popularmoviesapp.rest.TheMoviesDBApi;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +42,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+        singleMovieArrayList = new ArrayList<>();
+        movieAdapter = new MovieAdapter(singleMovieArrayList);
+
+        TheMoviesDBApi theMovieDbApi = new TheMoviesDBApi();
+        theMovieDbApi.getMovieClient().getMovieList().enqueue(new Callback<MovieList>() {
+            @Override
+            public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                for (SingleMovie singleMovie : response.body().getResults()){
+                    Log.e("Movie",singleMovie.getOriginalTitle());
+                    singleMovieArrayList.add(singleMovie);
+                }
+                movieAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onFailure(Call<MovieList> call, Throwable t) {
+
             }
         });
 
