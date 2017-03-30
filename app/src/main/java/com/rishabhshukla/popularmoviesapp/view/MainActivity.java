@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.rishabhshukla.popularmoviesapp.R;
+import com.rishabhshukla.popularmoviesapp.controller.EndlessScrollListener;
 import com.rishabhshukla.popularmoviesapp.controller.MovieAdapter;
 import com.rishabhshukla.popularmoviesapp.model.MovieList;
 import com.rishabhshukla.popularmoviesapp.model.SingleMovie;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<SingleMovie> singleMovieArrayList;
     MovieAdapter movieAdapter;
     private SwipeRefreshLayout swipeContainer;
+    private EndlessScrollListener scrollListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +82,22 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(movieAdapter);
+        scrollListener = new EndlessScrollListener((GridLayoutManager) layoutManager) {
+            @Override
+            public int getFooterViewType(int defaultNoFooterViewType) {
+                return -1;
+            }
+
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(page);
+            }
+
+        };
+        // Adds the scroll listener to RecyclerView
+        recyclerView.addOnScrollListener(scrollListener);
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
@@ -119,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -126,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
                 android.R.color.holo_red_light);
 
     }
+
+    private void loadNextDataFromApi(int page) {
+
+    }
+
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
