@@ -1,15 +1,26 @@
-package com.rishabhshukla.popularmoviesapp;
+package com.rishabhshukla.popularmoviesapp.view;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.rishabhshukla.popularmoviesapp.R;
+import com.rishabhshukla.popularmoviesapp.controller.MovieAdapter;
+import com.rishabhshukla.popularmoviesapp.model.SingleMovie;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    ArrayList<SingleMovie> singleMovieArrayList;
+    MovieAdapter movieAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
     }
 
     @Override
