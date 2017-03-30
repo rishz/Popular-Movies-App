@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<SingleMovie> singleMovieArrayList;
     MovieAdapter movieAdapter;
-
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         singleMovieArrayList = new ArrayList<>();
         movieAdapter = new MovieAdapter(singleMovieArrayList);
 
-        TheMoviesDBApi theMovieDbApi = new TheMoviesDBApi();
+        final TheMoviesDBApi theMovieDbApi = new TheMoviesDBApi();
         if(isOnline()) {
             theMovieDbApi.getMovieClient().getMovieList().enqueue(new Callback<MovieList>() {
                 @Override
@@ -72,6 +73,46 @@ public class MainActivity extends AppCompatActivity {
 
             });
         }
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                if(isOnline()) {
+                    theMovieDbApi.getMovieClient().getMovieList().enqueue(new Callback<MovieList>() {
+                        @Override
+                        public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                            for (SingleMovie singleMovie : response.body().getResults()) {
+                                Log.e("Movie", singleMovie.getOriginalTitle());
+                                singleMovieArrayList.add(singleMovie);
+                            }
+                            movieAdapter.notifyDataSetChanged();
+
+                            swipeContainer.setRefreshing(false);
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<MovieList> call, Throwable t) {
+
+                        }
+
+                    });
+                }
+
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movieRecyclerView);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(layoutManager);
