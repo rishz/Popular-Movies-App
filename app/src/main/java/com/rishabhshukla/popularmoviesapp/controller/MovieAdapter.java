@@ -23,6 +23,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     private ArrayList<SingleMovie> movies;
     private Context context;
+    public static final int VIEW_TYPE_LOADING = 0;
+    public static final int VIEW_TYPE_ACTIVITY = 1;
 
     public MovieAdapter(ArrayList<SingleMovie> movieArrayList){
         movies = movieArrayList;
@@ -33,11 +35,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.single_movie,null));
     }
 
+
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.textView.setText(movies.get(position).getOriginalTitle());
         String poster = "http://image.tmdb.org/t/p/w500" + movies.get(position).getPosterPath();
-        //TODO : remove fit and check what happens
         Picasso.with(context)
                 .load(poster)
                 .fit()

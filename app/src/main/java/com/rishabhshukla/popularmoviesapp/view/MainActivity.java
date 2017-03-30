@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         scrollListener = new EndlessScrollListener((GridLayoutManager) layoutManager) {
             @Override
             public int getFooterViewType(int defaultNoFooterViewType) {
-                return -1;
+                return defaultNoFooterViewType;
             }
 
             @Override
@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         };
         // Adds the scroll listener to RecyclerView
         recyclerView.addOnScrollListener(scrollListener);
+
+
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
