@@ -13,6 +13,7 @@ import com.rishabhshukla.popularmoviesapp.model.SingleMovie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rishabhshukla on 30/03/17.
@@ -61,14 +62,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             imageView = (ImageView) itemView.findViewById(R.id.movie_image);
         }
     }
-//    public void clear() {
-//        movies.clear();
-//        notifyDataSetChanged();
-//    }
-//
-//    // Add a list of items
-//    public void addAll(List<SingleMovie> list) {
-//        movies.addAll(list);
-//        notifyDataSetChanged();
-//    }
+    public void clear() {
+        movies.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items
+    public void addAll(List<SingleMovie> list) {
+        movies.addAll(list);
+        notifyDataSetChanged();
+    }
 }

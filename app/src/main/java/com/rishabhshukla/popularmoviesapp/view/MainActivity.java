@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.rishabhshukla.popularmoviesapp.R;
 import com.rishabhshukla.popularmoviesapp.controller.MovieAdapter;
@@ -74,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movieRecyclerView);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(movieAdapter);
+
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -82,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
+
                 if(isOnline()) {
+                    movieAdapter.clear();
                     theMovieDbApi.getMovieClient().getMovieList().enqueue(new Callback<MovieList>() {
                         @Override
                         public void onResponse(Call<MovieList> call, Response<MovieList> response) {
@@ -90,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e("Movie", singleMovie.getOriginalTitle());
                                 singleMovieArrayList.add(singleMovie);
                             }
+                            movieAdapter.addAll(singleMovieArrayList);
                             movieAdapter.notifyDataSetChanged();
+
 
                             swipeContainer.setRefreshing(false);
 
@@ -102,6 +112,9 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     });
+                }else{
+                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    swipeContainer.setRefreshing(false);
                 }
 
             }
@@ -111,12 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movieRecyclerView);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(movieAdapter);
 
     }
     public boolean isOnline() {
