@@ -1,6 +1,7 @@
 package com.rishabhshukla.popularmoviesapp.controller;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     private ArrayList<SingleMovie> movies;
     private Context context;
+    private SwipeRefreshLayout swipeContainer;
 
     public MovieAdapter(ArrayList<SingleMovie> movieArrayList){
         movies = movieArrayList;
