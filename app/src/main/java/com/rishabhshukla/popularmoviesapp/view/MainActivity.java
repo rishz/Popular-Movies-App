@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     MovieAdapter movieAdapter;
     private SwipeRefreshLayout swipeContainer;
     private EndlessScrollListener scrollListener;
+    int pageNumber=2;
+    TheMoviesDBApi theMovieDbApi;
 
 
     @Override
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         singleMovieArrayList = new ArrayList<>();
         movieAdapter = new MovieAdapter(singleMovieArrayList);
 
-        final TheMoviesDBApi theMovieDbApi = new TheMoviesDBApi();
+        theMovieDbApi = new TheMoviesDBApi();
         if(isOnline()) {
             theMovieDbApi.getMovieClient().getMovieList().enqueue(new Callback<MovieList>() {
                 @Override
@@ -149,7 +151,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadNextDataFromApi(int page) {
+        if(isOnline()) {
+            theMovieDbApi.getMovieClient().getMovieList(pageNumber).enqueue(new Callback<MovieList>() {
+                @Override
+                public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                    for (SingleMovie singleMovie : response.body().getResults()) {
+                        Log.e("Movie", singleMovie.getOriginalTitle());
+                        singleMovieArrayList.add(singleMovie);
+                    }
+                    movieAdapter.notifyDataSetChanged();
+                }
 
+                @Override
+                public void onFailure(Call<MovieList> call, Throwable t) {
+
+                }
+            });
+            pageNumber++;
+        }else{
+            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public boolean isOnline() {
