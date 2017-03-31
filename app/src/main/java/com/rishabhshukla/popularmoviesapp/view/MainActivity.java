@@ -36,6 +36,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
 
+    private String API_KEY = "c49a0ac24db60b4efb6b0d46f212a7f2";
     ArrayList<SingleMovie> singleMovieArrayList;
     MovieAdapter movieAdapter;
     private SwipeRefreshLayout swipeContainer;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         theMovieDbApi = new TheMoviesDBApi();
         if(isOnline()) {
-            theMovieDbApi.getMovieClient().getMovieList().enqueue(new Callback<MovieList>() {
+            theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY).enqueue(new Callback<MovieList>() {
                 @Override
                 public void onResponse(Call<MovieList> call, Response<MovieList> response) {
                     for (SingleMovie singleMovie : response.body().getResults()) {
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(isOnline()) {
                     movieAdapter.clear();
-                    theMovieDbApi.getMovieClient().getMovieList().enqueue(new Callback<MovieList>() {
+                    theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY).enqueue(new Callback<MovieList>() {
                         @Override
                         public void onResponse(Call<MovieList> call, Response<MovieList> response) {
                             for (SingleMovie singleMovie : response.body().getResults()) {
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadNextDataFromApi(int page) {
         if(isOnline()) {
-            theMovieDbApi.getMovieClient().getMovieList(pageNumber).enqueue(new Callback<MovieList>() {
+            theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY,pageNumber).enqueue(new Callback<MovieList>() {
                 @Override
                 public void onResponse(Call<MovieList> call, Response<MovieList> response) {
                     for (SingleMovie singleMovie : response.body().getResults()) {
@@ -246,5 +247,52 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void callMovies() {
+
+        Call<MovieList> call = null;
+
+        switch (filter){
+            case 0:{
+                call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY);
+                break;
+            }
+            case 1:{
+                call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY);
+                break;
+            }
+            case 2:{
+                call = theMovieDbApi.getMovieClient().getMostRatedMovies(API_KEY);
+                break;
+            }
+        }
+
+        if(isOnline()) {
+            if(call!=null) {
+                movieAdapter.clear();
+                call.enqueue(new Callback<MovieList>() {
+                    @Override
+                    public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                        for (SingleMovie singleMovie : response.body().getResults()) {
+                            Log.e("Movie", singleMovie.getOriginalTitle());
+                            singleMovieArrayList.add(singleMovie);
+                        }
+                        movieAdapter.addAll(singleMovieArrayList);
+                        movieAdapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieList> call, Throwable t) {
+
+                    }
+
+
+                });
+            }
+        }else{
+            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 }
