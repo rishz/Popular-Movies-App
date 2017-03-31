@@ -1,12 +1,15 @@
 package com.rishabhshukla.popularmoviesapp.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private EndlessScrollListener scrollListener;
     int pageNumber=2;
     TheMoviesDBApi theMovieDbApi;
-
+    private int filter = 0;
+    private CharSequence items[] = {"Highest Rated", "Most Popular", "Most Rated"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movieRecyclerView);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
+        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+             layoutManager = new GridLayoutManager(this,2);
+        }
+        else if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+             layoutManager = new GridLayoutManager(this,3);
+        }
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(movieAdapter);
         scrollListener = new EndlessScrollListener((GridLayoutManager) layoutManager) {
@@ -195,9 +205,44 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_search:{
+
+                break;
+            }
+            case R.id.action_sort:{
+                Log.e("CHECK CLICK", "CLICKED! YO!");
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Choose Sorting Option:")
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int which) {
+                                switch (which){
+                                    case 0:{
+                                        filter = 0;
+                                        callMovies();
+                                        break;
+                                    }
+                                    case 1:{
+                                        filter = 1;
+                                        callMovies();
+                                        break;
+                                    }
+                                    case 2:{
+                                        filter = 2;
+                                        callMovies();
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                builder.show();
+                break;
+            }
+            case R.id.action_settings:{
+
+                break;
+            }
         }
 
         return super.onOptionsItemSelected(item);
