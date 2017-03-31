@@ -65,25 +65,7 @@ public class MainActivity extends AppCompatActivity {
         movieAdapter = new MovieAdapter(singleMovieArrayList);
 
         theMovieDbApi = new TheMoviesDBApi();
-        if(isOnline()) {
-            theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY).enqueue(new Callback<MovieList>() {
-                @Override
-                public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                    for (SingleMovie singleMovie : response.body().getResults()) {
-                        Log.e("Movie", singleMovie.getOriginalTitle());
-                        singleMovieArrayList.add(singleMovie);
-                    }
-                    movieAdapter.notifyDataSetChanged();
-
-                }
-
-                @Override
-                public void onFailure(Call<MovieList> call, Throwable t) {
-
-                }
-
-            });
-        }
+        callMovies();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movieRecyclerView);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
@@ -98,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         scrollListener = new EndlessScrollListener((GridLayoutManager) layoutManager) {
             @Override
             public int getFooterViewType(int defaultNoFooterViewType) {
-                return defaultNoFooterViewType;
+                return -1;
             }
 
             @Override
@@ -123,29 +105,48 @@ public class MainActivity extends AppCompatActivity {
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
 
+                Call<MovieList> call = null;
+
+                switch (filter){
+                    case 0:{
+                        call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY);
+                        break;
+                    }
+                    case 1:{
+                        call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY);
+                        break;
+                    }
+                    case 2:{
+                        call = theMovieDbApi.getMovieClient().getMostRatedMovies(API_KEY);
+                        break;
+                    }
+                }
+
                 if(isOnline()) {
-                    movieAdapter.clear();
-                    theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY).enqueue(new Callback<MovieList>() {
-                        @Override
-                        public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                            for (SingleMovie singleMovie : response.body().getResults()) {
-                                Log.e("Movie", singleMovie.getOriginalTitle());
-                                singleMovieArrayList.add(singleMovie);
+                    if(call!=null){
+                        movieAdapter.clear();
+                        call.enqueue(new Callback<MovieList>() {
+                            @Override
+                            public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                                for (SingleMovie singleMovie : response.body().getResults()) {
+                                    Log.e("Movie", singleMovie.getOriginalTitle());
+                                    singleMovieArrayList.add(singleMovie);
+                                }
+                                movieAdapter.addAll(singleMovieArrayList);
+                                movieAdapter.notifyDataSetChanged();
+
+
+                                swipeContainer.setRefreshing(false);
+
                             }
-                            movieAdapter.addAll(singleMovieArrayList);
-                            movieAdapter.notifyDataSetChanged();
 
+                            @Override
+                            public void onFailure(Call<MovieList> call, Throwable t) {
 
-                            swipeContainer.setRefreshing(false);
+                            }
 
-                        }
-
-                        @Override
-                        public void onFailure(Call<MovieList> call, Throwable t) {
-
-                        }
-
-                    });
+                        });
+                    }
                 }else{
                     Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
                     swipeContainer.setRefreshing(false);
@@ -164,22 +165,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadNextDataFromApi(int page) {
+        Call<MovieList> call = null;
+
+        switch (filter){
+            case 0:{
+                call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY,pageNumber);
+                break;
+            }
+            case 1:{
+                call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY,pageNumber);
+                break;
+            }
+            case 2:{
+                call = theMovieDbApi.getMovieClient().getMostRatedMovies(API_KEY,pageNumber);
+                break;
+            }
+        }
+
         if(isOnline()) {
-            theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY,pageNumber).enqueue(new Callback<MovieList>() {
-                @Override
-                public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                    for (SingleMovie singleMovie : response.body().getResults()) {
-                        Log.e("Movie", singleMovie.getOriginalTitle());
-                        singleMovieArrayList.add(singleMovie);
+            if(call!=null) {
+                movieAdapter.clear();
+                call.enqueue(new Callback<MovieList>() {
+                    @Override
+                    public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                        for (SingleMovie singleMovie : response.body().getResults()) {
+                            Log.e("Movie", singleMovie.getOriginalTitle());
+                            singleMovieArrayList.add(singleMovie);
+                        }
+                        movieAdapter.addAll(singleMovieArrayList);
+                        movieAdapter.notifyDataSetChanged();
+
                     }
-                    movieAdapter.notifyDataSetChanged();
-                }
 
-                @Override
-                public void onFailure(Call<MovieList> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<MovieList> call, Throwable t) {
 
-                }
-            });
+                    }
+
+
+                });
+            }
             pageNumber++;
         }else{
             Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
