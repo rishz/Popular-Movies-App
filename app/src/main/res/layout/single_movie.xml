@@ -34,7 +34,9 @@
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:background="@color/colorPrimaryLight"
+                android:textColor="@color/colorPrimary"/>
         </LinearLayout>
 
 
