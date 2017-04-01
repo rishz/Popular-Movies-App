@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     int pageNumber=2;
     TheMoviesDBApi theMovieDbApi;
     private int filter = 0;
+    RecyclerView.LayoutManager layoutManager;
     private CharSequence items[] = {"Highest Rated", "Most Popular", "Most Rated"};
 
     @Override
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -65,10 +68,29 @@ public class MainActivity extends AppCompatActivity {
         movieAdapter = new MovieAdapter(singleMovieArrayList);
 
         theMovieDbApi = new TheMoviesDBApi();
-        callMovies();
 
+        if(isOnline()) {
+                theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY).enqueue(new Callback<MovieList>() {
+                    @Override
+                    public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                        for (SingleMovie singleMovie : response.body().getResults()) {
+                            Log.e("Movie", singleMovie.getOriginalTitle());
+                            singleMovieArrayList.add(singleMovie);
+                        }
+//                        movieAdapter.addAll(singleMovieArrayList);
+                        movieAdapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieList> call, Throwable t) {
+
+                    }
+                });
+
+        }
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movieRecyclerView);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
+        layoutManager = new GridLayoutManager(this,2);
         if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
              layoutManager = new GridLayoutManager(this,2);
         }
@@ -109,11 +131,11 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (filter){
                     case 0:{
-                        call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY);
+                        call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY);
                         break;
                     }
                     case 1:{
-                        call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY);
+                        call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY);
                         break;
                     }
                     case 2:{
@@ -169,11 +191,11 @@ public class MainActivity extends AppCompatActivity {
 
         switch (filter){
             case 0:{
-                call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY,pageNumber);
+                call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY,pageNumber);
                 break;
             }
             case 1:{
-                call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY,pageNumber);
+                call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY,pageNumber);
                 break;
             }
             case 2:{
@@ -184,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(isOnline()) {
             if(call!=null) {
-                movieAdapter.clear();
+//                movieAdapter.clear();
                 call.enqueue(new Callback<MovieList>() {
                     @Override
                     public void onResponse(Call<MovieList> call, Response<MovieList> response) {
@@ -192,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.e("Movie", singleMovie.getOriginalTitle());
                             singleMovieArrayList.add(singleMovie);
                         }
-                        movieAdapter.addAll(singleMovieArrayList);
+//                        movieAdapter.addAll(singleMovieArrayList);
                         movieAdapter.notifyDataSetChanged();
 
                     }
@@ -239,29 +261,28 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_sort:{
                 Log.e("CHECK CLICK", "CLICKED! YO!");
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Choose Sorting Option:")
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
-                                switch (which){
-                                    case 0:{
-                                        filter = 0;
-                                        callMovies();
-                                        break;
-                                    }
-                                    case 1:{
-                                        filter = 1;
-                                        callMovies();
-                                        break;
-                                    }
-                                    case 2:{
-                                        filter = 2;
-                                        callMovies();
-                                        break;
-                                    }
-                                }
+                builder.setTitle("Sort By:").setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:{
+                                    filter = 0;
+                                    callMovies();
+                                break;
                             }
-                        });
+                            case 1:{
+                                    filter = 1;
+                                    callMovies();
+                                break;
+                            }
+                            case 2:{
+                                    filter = 2;
+                                    callMovies();
+                                break;
+                            }
+                        }
+                    }
+                });
                 builder.show();
                 break;
             }
@@ -280,11 +301,11 @@ public class MainActivity extends AppCompatActivity {
 
         switch (filter){
             case 0:{
-                call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY);
+                call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY);
                 break;
             }
             case 1:{
-                call = theMovieDbApi.getMovieClient().getMostPopularMovies(API_KEY);
+                call = theMovieDbApi.getMovieClient().getTopRatedMovies(API_KEY);
                 break;
             }
             case 2:{
@@ -319,5 +340,20 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
+
+        scrollListener = new EndlessScrollListener((GridLayoutManager) layoutManager) {
+            @Override
+            public int getFooterViewType(int defaultNoFooterViewType) {
+                return -1;
+            }
+
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(page);
+            }
+
+        };
     }
 }
