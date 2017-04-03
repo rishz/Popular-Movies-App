@@ -4,6 +4,7 @@ import com.rishabhshukla.popularmoviesapp.model.MovieList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -35,5 +36,25 @@ public interface MovieClient {
 
     @GET("movie/popular")
     Call<MovieList> getMostPopularMovies(@Query("api_key") String apiKey, @Query("page") int page);
+
+    //Search Movie By ID
+
+    @GET("movie/{id}")
+    Call<MovieList> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
+
+    //Search Movie By Name
+
+    @GET("search/movie?query=")
+    Call<MovieList> searchMovieDetails(String name, @Query("api_key") String apiKey);
+
+    //Search Movie Videos
+//
+//    @GET("movie/{id}/videos")
+//    Call<VideosResponse> searchMovieVideos(@Path("id") int id, @Query("api_key") String apiKey);
+//
+//    //Search Movie Reviews
+//
+//    @GET("movie/{id}/reviews")
+//    Call<ReviewsResponse> searchMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 
 }
