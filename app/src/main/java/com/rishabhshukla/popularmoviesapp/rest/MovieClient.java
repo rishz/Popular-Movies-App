@@ -1,6 +1,8 @@
 package com.rishabhshukla.popularmoviesapp.rest;
 
 import com.rishabhshukla.popularmoviesapp.model.MovieList;
+import com.rishabhshukla.popularmoviesapp.model.ReviewList;
+import com.rishabhshukla.popularmoviesapp.model.VideoList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -48,13 +50,13 @@ public interface MovieClient {
     Call<MovieList> searchMovieDetails(String name, @Query("api_key") String apiKey);
 
     //Search Movie Videos
-//
-//    @GET("movie/{id}/videos")
-//    Call<VideosResponse> searchMovieVideos(@Path("id") int id, @Query("api_key") String apiKey);
-//
-//    //Search Movie Reviews
-//
-//    @GET("movie/{id}/reviews")
-//    Call<ReviewsResponse> searchMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("movie/{id}/videos")
+    Call<VideoList> searchMovieVideos(@Path("id") int id, @Query("api_key") String apiKey);
+
+    //Search Movie Reviews
+
+    @GET("movie/{id}/reviews")
+    Call<ReviewList> searchMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 
 }
