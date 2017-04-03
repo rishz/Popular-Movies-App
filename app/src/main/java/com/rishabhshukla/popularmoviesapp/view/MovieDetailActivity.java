@@ -20,7 +20,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private int id;
     private CollapsingToolbarLayout toolbar_layout;
 
-    private ImageView poster;
+    private ImageView poster, backdrop;
     private TextView movie_title, movie_rating, movie_release_date, movie_overview;
 
     @Override
@@ -33,6 +33,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         poster = (ImageView) findViewById(R.id.poster);
+        backdrop = (ImageView) findViewById(R.id.posterpath);
         movie_title = (TextView) findViewById(R.id.title);
         movie_rating = (TextView) findViewById(R.id.rating);
         movie_release_date = (TextView) findViewById(R.id.release_date);
@@ -60,9 +61,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         movie_release_date.setText(release_date);
         movie_overview.setText(overview);
 
-        getSupportActionBar().setTitle(title);
-
-        String posterImg = "http://image.tmdb.org/t/p/w500" + poster_path;
+        String posterImg = "http://image.tmdb.org/t/p/w185" + poster_path;
         Picasso.with(this)
                 .load(posterImg)
                 .fit()
@@ -70,9 +69,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                 .error(R.drawable.ic_error)
                 .into(poster);
 
-//        ViewTarget view_target = new ViewTarget(toolbar_layout);
-
-
+        String backdropImg = "http://image.tmdb.org/t/p/w500" + backdrop_path;
+        Picasso.with(this)
+                .load(backdropImg)
+                .fit()
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_error)
+                .into(backdrop);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
