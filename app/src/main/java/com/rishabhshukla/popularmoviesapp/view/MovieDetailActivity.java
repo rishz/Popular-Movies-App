@@ -16,9 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rishabhshukla.popularmoviesapp.R;
+import com.rishabhshukla.popularmoviesapp.controller.ReviewAdapter;
+import com.rishabhshukla.popularmoviesapp.controller.VideoAdapter;
 import com.rishabhshukla.popularmoviesapp.model.ReviewList;
 import com.rishabhshukla.popularmoviesapp.model.SingleReview;
 import com.rishabhshukla.popularmoviesapp.model.SingleVideo;
+import com.rishabhshukla.popularmoviesapp.model.VideoList;
 import com.rishabhshukla.popularmoviesapp.rest.TheMoviesDBApi;
 import com.squareup.picasso.Picasso;
 
@@ -114,6 +117,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         reviews = Collections.emptyList();
 
+        callReviews();
+        callVideos();
     }
 
 //    public Drawable drawableFromUrl(String url) throws IOException {
@@ -140,10 +145,9 @@ private void callReviews(){
 //                }
                 if(reviews.size()>0){
                     reviews_card.setVisibility(View.VISIBLE);
-                    reviews_rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    ReviewsAdapter adapter = new ReviewsAdapter(reviews, R.layout.reviews_layout, getApplicationContext());
-                    Log.e("Size", " " + adapter.getItemCount());
-                    reviews_rv.setAdapter(adapter);
+                    rvReview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    ReviewAdapter adapter = new ReviewAdapter(reviews, getApplicationContext());
+                    rvReview.setAdapter(adapter);
                 }
             }
 
@@ -154,5 +158,34 @@ private void callReviews(){
         });
     }
 }
+
+    private void callVideos(){
+        Call<VideoList> call = theMovieDbApi.getMovieClient().searchMovieVideos(id, API_KEY);
+        if(call!=null){
+            call.enqueue(new Callback<VideoList>() {
+                @Override
+                public void onResponse(Call<VideoList> call, Response<VideoList> response) {
+                    videos = new ArrayList<SingleVideo>();
+                    videos = response.body().getResults();
+//                    for(SingleVideo singleVideo : videos){
+//                        Log.e("Video", singleVideo.getKey());
+////                        reviews.add(singleReview);
+//                    }
+                    if(videos.size()>0){
+                        videos_card.setVisibility(View.VISIBLE);
+                        rvVideo.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+                        VideoAdapter adapter = new VideoAdapter(videos, getApplicationContext());
+                        Log.e("Size", " " + adapter.getItemCount());
+                        rvVideo.setAdapter(adapter);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<VideoList> call, Throwable t) {
+
+                }
+            });
+        }
+    }
 
 }
