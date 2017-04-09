@@ -1,6 +1,8 @@
 package com.rishabhshukla.popularmoviesapp.controller;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,10 +37,21 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
 
         path = "https://img.youtube.com/vi/" + videos.get(position).getKey() + "/mqdefault.jpg";
         Picasso.with(context).load(path).fit().into(holder.backDrop);
+
+
+        holder.setClickListener(new ItemClickListener() {
+            @Override
+            public void onClick(View v, int position, boolean isLongClick) {
+                Uri videoTrailer = Uri.parse("https://www.youtube.com/watch?v="+videos.get(position).getKey());
+                Intent videoIntent = new Intent(Intent.ACTION_VIEW,videoTrailer);
+                videoIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(videoIntent);
+            }
+        });
 
     }
 
@@ -47,14 +60,25 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         return videos.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView backDrop;
         public RelativeLayout clickView;
+        ItemClickListener clickListener;
 
         public ViewHolder(View itemView) {
             super(itemView);
             backDrop = (ImageView) itemView.findViewById(R.id.back_drop);
             clickView = (RelativeLayout) itemView.findViewById(R.id.click_view);
+
+            itemView.setOnClickListener(this);
+        }
+        public void setClickListener(ItemClickListener clickListener){
+            this.clickListener = clickListener;
+        }
+
+        @Override
+        public void onClick(View v) {
+            clickListener.onClick(itemView, getAdapterPosition(), false);
         }
     }
 }
