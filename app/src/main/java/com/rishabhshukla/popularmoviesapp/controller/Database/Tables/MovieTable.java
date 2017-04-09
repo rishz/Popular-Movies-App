@@ -1,5 +1,10 @@
 package com.rishabhshukla.popularmoviesapp.controller.Database.Tables;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.rishabhshukla.popularmoviesapp.model.SingleMovie;
+
 import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.*;
 
 /**
@@ -36,5 +41,25 @@ public class MovieTable {
          String voteAvg = "movie_voteAvg";
          String voteCount = "movie_voteCount";
          String video = "movie_video";
+    }
+
+    public static boolean addMovie(SQLiteDatabase db, SingleMovie movie){
+        if(db.isReadOnly()){
+            return false;
+        }
+        ContentValues obj = new ContentValues();
+        obj.put(Columns.ID,movie.getId());
+        obj.put(Columns.posterPath,movie.getPosterPath());
+        obj.put(Columns.overview,movie.getOverview());
+        obj.put(Columns.originalTitle,movie.getOriginalTitle());
+        obj.put(Columns.backdropPath,movie.getBackdropPath());
+        obj.put(Columns.adult,movie.getAdult());
+        obj.put(Columns.voteCount,movie.getVoteCount());
+        obj.put(Columns.title,movie.getTitle());
+
+        db.insert(TABLE_NAME,null,obj);
+        db.close();
+
+        return true;
     }
 }

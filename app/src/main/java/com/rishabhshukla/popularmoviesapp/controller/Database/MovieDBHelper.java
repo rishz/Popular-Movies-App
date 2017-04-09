@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.rishabhshukla.popularmoviesapp.controller.Database.Tables.MovieTable;
+
 /**
  * Created by rishabhshukla on 09/04/17.
  */
@@ -19,7 +21,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL(MovieTable.CMD_TABLE_CREATE);
     }
 
     @Override
