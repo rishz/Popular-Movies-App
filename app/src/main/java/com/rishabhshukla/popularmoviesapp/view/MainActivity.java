@@ -2,6 +2,7 @@ package com.rishabhshukla.popularmoviesapp.view;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -275,6 +276,11 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.action_settings:{
 
+                break;
+            }
+            case R.id.menu_fav:{
+                Intent i = new Intent(this,FavouritesActivity.class);
+                startActivity(i);
                 break;
             }
         }
