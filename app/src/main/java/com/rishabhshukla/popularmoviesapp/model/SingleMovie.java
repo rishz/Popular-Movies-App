@@ -3,12 +3,13 @@ package com.rishabhshukla.popularmoviesapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by rishabhshukla on 30/03/17.
  */
-public class SingleMovie {
+public class SingleMovie implements Serializable{
     @SerializedName("poster_path")
     @Expose
     private String posterPath;

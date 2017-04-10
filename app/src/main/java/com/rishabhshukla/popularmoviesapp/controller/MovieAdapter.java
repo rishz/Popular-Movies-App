@@ -54,10 +54,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             @Override
             public void onClick(View v, int position, boolean isLongClick) {
                 if(isLongClick){
-                    holder.DetailIntent(movies.get(position).getTitle(), movies.get(position).getPosterPath(), String.valueOf(movies.get(position).getAdult().toString()), movies.get(position).getBackdropPath(), movies.get(position).getOriginalLanguage(), String.valueOf(movies.get(position).getPopularity()), movies.get(position).getReleaseDate(), String.valueOf(movies.get(position).getVoteCount()), String.valueOf(movies.get(position).getVoteAvg()), String.valueOf(movies.get(position).getVideo()), movies.get(position).getOverview(), movies.get(position).getId());
+                    holder.DetailIntent(movies.get(position),movies.get(position).getTitle(), movies.get(position).getPosterPath(), String.valueOf(movies.get(position).getAdult().toString()), movies.get(position).getBackdropPath(), movies.get(position).getOriginalLanguage(), String.valueOf(movies.get(position).getPopularity()), movies.get(position).getReleaseDate(), String.valueOf(movies.get(position).getVoteCount()), String.valueOf(movies.get(position).getVoteAvg()), String.valueOf(movies.get(position).getVideo()), movies.get(position).getOverview(), movies.get(position).getId());
                 }
                 else {
-                    holder.DetailIntent(movies.get(position).getTitle(), movies.get(position).getPosterPath(), String.valueOf(movies.get(position).getAdult()), movies.get(position).getBackdropPath(), movies.get(position).getOriginalLanguage(), String.valueOf(movies.get(position).getPopularity()), movies.get(position).getReleaseDate(), String.valueOf(movies.get(position).getVoteCount()), String.valueOf(movies.get(position).getVoteAvg()), String.valueOf(movies.get(position).getVideo()), movies.get(position).getOverview(), movies.get(position).getId());
+                    holder.DetailIntent(movies.get(position),movies.get(position).getTitle(), movies.get(position).getPosterPath(), String.valueOf(movies.get(position).getAdult()), movies.get(position).getBackdropPath(), movies.get(position).getOriginalLanguage(), String.valueOf(movies.get(position).getPopularity()), movies.get(position).getReleaseDate(), String.valueOf(movies.get(position).getVoteCount()), String.valueOf(movies.get(position).getVoteAvg()), String.valueOf(movies.get(position).getVideo()), movies.get(position).getOverview(), movies.get(position).getId());
                 }
             }
         });
@@ -97,10 +97,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             return false;
         }
 
-        public void DetailIntent(String title, String poster_path, String is_adult, String backdrop_path,
+        public void DetailIntent(SingleMovie movie, String title, String poster_path, String is_adult, String backdrop_path,
                                  String original_language, String popularity, String release_date, String vote_count,
                                  String vote_average, String is_video, String overview, int id){
             Intent i = new Intent(context, MovieDetailActivity.class);
+            i.putExtra("movie", movie);
             i.putExtra("title", title);
             i.putExtra("poster_path", poster_path);
             i.putExtra("is_adult", is_adult);

@@ -5,7 +5,14 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.rishabhshukla.popularmoviesapp.model.SingleMovie;
 
-import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.*;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.COMMA;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.LBR;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.RBR;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.SEMICOL;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.TYPE_BOOLEAN;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.TYPE_INT;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.TYPE_PK;
+import static com.rishabhshukla.popularmoviesapp.controller.Database.Consts.TYPE_TEXT;
 
 /**
  * Created by rishabhshukla on 09/04/17.
@@ -37,10 +44,10 @@ public class MovieTable {
          String backdropPath = "movie_backdropPath";
          String originalLanguage = "movie_originalLanguage";
         String adult = "movie_adult";
-        String popularity = "movie_popularity";
-         String voteAvg = "movie_voteAvg";
+//        String popularity = "movie_popularity";
+//         String voteAvg = "movie_voteAvg";
          String voteCount = "movie_voteCount";
-         String video = "movie_video";
+//         String video = "movie_video";
     }
 
     public static boolean addMovie(SQLiteDatabase db, SingleMovie movie){
@@ -52,14 +59,36 @@ public class MovieTable {
         obj.put(Columns.posterPath,movie.getPosterPath());
         obj.put(Columns.overview,movie.getOverview());
         obj.put(Columns.originalTitle,movie.getOriginalTitle());
+        obj.put(Columns.originalLanguage,movie.getOriginalLanguage());
         obj.put(Columns.backdropPath,movie.getBackdropPath());
         obj.put(Columns.adult,movie.getAdult());
         obj.put(Columns.voteCount,movie.getVoteCount());
         obj.put(Columns.title,movie.getTitle());
+        obj.put(Columns.releaseDate,movie.getReleaseDate());
 
         db.insert(TABLE_NAME,null,obj);
         db.close();
 
         return true;
     }
+//    public static ArrayList<SingleMovie> getAllTasks (SQLiteDatabase db){
+//        String[] PROJECTION = {
+//                Columns.ID, Columns.posterPath, Columns.backdropPath, Columns.voteCount, Columns.adult
+//                ,Columns.originalLanguage, Columns.originalTitle, Columns.overview, Columns.releaseDate,
+//                Columns.title
+//        };
+//
+//        Cursor cursor = db.query(TABLE_NAME,PROJECTION,null,null,null,null,null);
+//
+//        ArrayList<SingleMovie> movies = new ArrayList<>();
+//        cursor.moveToFirst();
+//
+//        int idIndex=  cursor.getColumnIndex(Columns.ID);
+//        int taskIndex = cursor.getColumnIndex(Columns.TASK);
+//        while(cursor.moveToNext()){
+//            movies.add(new SingleMovie(cursor.getInt(idIndex),cursor.getString(taskIndex)));
+//        }
+//        cursor.close();
+//        return movies;
+//    }
 }

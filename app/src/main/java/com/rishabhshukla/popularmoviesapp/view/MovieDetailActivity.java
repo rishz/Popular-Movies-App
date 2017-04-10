@@ -15,10 +15,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.noodle.Noodle;
 import com.rishabhshukla.popularmoviesapp.R;
 import com.rishabhshukla.popularmoviesapp.controller.ReviewAdapter;
 import com.rishabhshukla.popularmoviesapp.controller.VideoAdapter;
 import com.rishabhshukla.popularmoviesapp.model.ReviewList;
+import com.rishabhshukla.popularmoviesapp.model.SingleMovie;
 import com.rishabhshukla.popularmoviesapp.model.SingleReview;
 import com.rishabhshukla.popularmoviesapp.model.SingleVideo;
 import com.rishabhshukla.popularmoviesapp.model.VideoList;
@@ -45,6 +47,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private CardView reviews_card, videos_card;
     RecyclerView rvVideo,rvReview;
     private ImageView poster, backdrop;
+    SingleMovie movie;
     private TextView movie_title, movie_rating, movie_release_date, movie_overview;
 
     @Override
@@ -70,6 +73,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         theMovieDbApi = new TheMoviesDBApi();
 
         Intent i = getIntent();
+        movie = (SingleMovie) i.getSerializableExtra("movie");
         title = i.getStringExtra("title");
         poster_path = i.getStringExtra("poster_path");
         backdrop_path = i.getStringExtra("backdrop_path");
@@ -110,7 +114,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Noodle noodle = Noodle.with(MovieDetailActivity.this).build();
+                if(movie!=null){
+                    noodle.put("fav",movie);
+                }
+                Snackbar.make(view, "Added to Favourites", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
