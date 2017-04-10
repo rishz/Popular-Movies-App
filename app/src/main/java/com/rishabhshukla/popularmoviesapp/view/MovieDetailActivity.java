@@ -1,10 +1,10 @@
 package com.rishabhshukla.popularmoviesapp.view;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.noodle.Noodle;
 import com.rishabhshukla.popularmoviesapp.R;
 import com.rishabhshukla.popularmoviesapp.controller.ReviewAdapter;
 import com.rishabhshukla.popularmoviesapp.controller.VideoAdapter;
@@ -114,12 +113,14 @@ public class MovieDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Noodle noodle = Noodle.with(MovieDetailActivity.this).build();
-                if(movie!=null){
-                    noodle.put("fav",movie);
-                }
-                Snackbar.make(view, "Added to Favourites", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Noodle noodle = Noodle.with(MovieDetailActivity.this).build();
+//                if(movie!=null){
+//                    noodle.put("fav",movie);
+//                }
+//                Snackbar.make(view, "Added to Favourites", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                SharedPreferences prefs = getSharedPreferences("movies",MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
             }
         });
 
